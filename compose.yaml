@@ -1,0 +1,32 @@
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "8123:8123"  # HTTP port
+      - "9000:9000"
+    environment:
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=password
+      - CLICKHOUSE_DB=dashboard_edu
+#    volumes:
+#      - ./clickhouse-data:/var/lib/clickhouse
+#      - ./clickhouse-config:/etc/clickhouse-server
+
+  mysql-db:
+      image: 'mysql:latest'
+      environment:
+        - MYSQL_DATABASE=db_moodle_students
+        - MYSQL_PASSWORD=students
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_USER=students
+      ports:
+        - '3307:3306' # permet de faire le port forwarding entre le port 3306 du conteneur et le port 3307 de la machine hôte
+
+      volumes:
+        - mysql-data:/var/lib/mysql
+        - ./init-scripts:/docker-entrypoint-initdb.d
+      restart: always
+
+volumes:
+  mysql-data:
+    driver: local
